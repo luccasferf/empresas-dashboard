@@ -131,27 +131,39 @@ def get_total_registros(con) -> int:
 # ---------------------------------------------------------------------------
 
 @cached
-def kpi_ativas(con, filtros: Filtros) -> int:
+def _agregado_por_situacao(con, filtros: Filtros) -> dict:
+    """SUM(empresas, mei, simples) agrupado por situação cadastral — usado por
+    kpi_ativas, kpi_mei, kpi_simples e kpi_taxa_ativas_baixadas, que
+    compartilham exatamente o mesmo WHERE (situação excluída do filtro).
+    Uma varredura só em vez de quatro; os valores retornados são idênticos
+    aos das queries individuais que isso substituiu."""
     where, params = _build_where(filtros, exclude=frozenset({"situacao"}))
-    sql = f"SELECT SUM(qtd_empresas) FROM empresas WHERE {where} AND situacao_cadastral = 'ATIVA'"
-    row = con.execute(sql, params).fetchone()
-    return int(row[0] or 0)
+    sql = f"""
+        SELECT situacao_cadastral,
+               SUM(qtd_empresas) AS empresas,
+               SUM(qtd_empresas_mei) AS mei,
+               SUM(qtd_empresas_simples) AS simples
+        FROM empresas
+        WHERE {where}
+        GROUP BY situacao_cadastral
+    """
+    rows = con.execute(sql, params).fetchall()
+    return {r[0]: (int(r[1] or 0), int(r[2] or 0), int(r[3] or 0)) for r in rows}
+
+
+@cached
+def kpi_ativas(con, filtros: Filtros) -> int:
+    return _agregado_por_situacao(con, filtros).get("ATIVA", (0, 0, 0))[0]
 
 
 @cached
 def kpi_mei(con, filtros: Filtros) -> int:
-    where, params = _build_where(filtros, exclude=frozenset({"situacao"}))
-    sql = f"SELECT SUM(qtd_empresas_mei) FROM empresas WHERE {where} AND situacao_cadastral = 'ATIVA'"
-    row = con.execute(sql, params).fetchone()
-    return int(row[0] or 0)
+    return _agregado_por_situacao(con, filtros).get("ATIVA", (0, 0, 0))[1]
 
 
 @cached
 def kpi_simples(con, filtros: Filtros) -> int:
-    where, params = _build_where(filtros, exclude=frozenset({"situacao"}))
-    sql = f"SELECT SUM(qtd_empresas_simples) FROM empresas WHERE {where} AND situacao_cadastral = 'ATIVA'"
-    row = con.execute(sql, params).fetchone()
-    return int(row[0] or 0)
+    return _agregado_por_situacao(con, filtros).get("ATIVA", (0, 0, 0))[2]
 
 
 @cached
@@ -164,16 +176,9 @@ def kpi_aberturas_periodo(con, filtros: Filtros) -> int:
 
 @cached
 def kpi_taxa_ativas_baixadas(con, filtros: Filtros) -> float:
-    where, params = _build_where(filtros, exclude=frozenset({"situacao"}))
-    sql = f"""
-        SELECT situacao_cadastral, SUM(qtd_empresas)
-        FROM empresas
-        WHERE {where} AND situacao_cadastral IN ('ATIVA', 'BAIXADA')
-        GROUP BY situacao_cadastral
-    """
-    rows = dict(con.execute(sql, params).fetchall())
-    ativas = rows.get("ATIVA", 0) or 0
-    baixadas = rows.get("BAIXADA", 0) or 0
+    agregado = _agregado_por_situacao(con, filtros)
+    ativas = agregado.get("ATIVA", (0, 0, 0))[0]
+    baixadas = agregado.get("BAIXADA", (0, 0, 0))[0]
     total = ativas + baixadas
     return (ativas / total * 100) if total else 0.0
 
