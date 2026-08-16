@@ -1,0 +1,578 @@
+/* ---------- Tokens do design system ----------
+   Fixos nos dois temas (sombra/radius em preto com opacidade baixa funciona
+   igual bem em fundo claro ou escuro — só as cores de superfície/texto/borda
+   mudam por tema, essas vêm de utils/theme.py via --page/--surface/etc). */
+:root {
+  --radius-card: 14px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.16);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+html, body, [class*="css"], .stApp, .stMarkdown, p, span, div, label, li {
+  font-family: 'Inter', -apple-system, 'Segoe UI', Arial, sans-serif !important;
+}
+
+/* Wash bem sutil no topo em vez de uma cor chapada — dá uma sensação de
+   profundidade na página inteira sem que dê pra "apontar" onde está. */
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"] {
+  background: radial-gradient(ellipse 1400px 640px at 50% -8%, var(--accent-glow) 0%, var(--page) 60%) !important;
+}
+
+[data-testid="stHeader"] {
+  background: transparent !important;
+}
+
+.block-container {
+  padding-top: 5rem;
+  padding-bottom: 3rem;
+  max-width: 1440px;
+}
+
+/* ---------- Header ---------- */
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 20px;
+}
+
+.app-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-logo {
+  font-size: 46px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
+}
+
+.app-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* O card do hero em si (fundo, glow, número animado) é renderizado inteiro
+   dentro do iframe isolado de utils/hero_component.py — ver o comentário lá
+   pra entender por quê. É o único iframe da página, então dá pra estilizar
+   a moldura dele direto pelo elemento sem precisar de wrapper. */
+iframe {
+  border: none;
+  display: block;
+  margin-bottom: 22px;
+  /* A sombra do card não pode viver DENTRO do iframe: o body lá tem
+     overflow:hidden (pro conteúdo não vazar) e isso corta a sombra de
+     forma abrupta, feio, nos cantos — em vez de esmaecer. Aplicando aqui
+     fora, no elemento <iframe> da página principal, ela desenha por cima
+     do formato real do card (tudo em volta é transparente) sem cortar. */
+  filter: drop-shadow(var(--shadow-lg));
+}
+
+/* ---------- Filter bar ---------- */
+
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 22px 8px 22px;
+  margin-bottom: 26px;
+}
+
+/* Cada coluna de filtro (rótulo + campo) ganha um respiro vertical maior —
+   sem isso o rótulo colava quase em cima do campo, e os campos colavam nos
+   da linha de baixo quando empilham em telas estreitas. */
+.filter-bar [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] {
+  margin-bottom: 2px;
+}
+[data-testid="column"]:has([data-testid="stSelectbox"]),
+[data-testid="column"]:has([data-testid="stMultiSelect"]),
+[data-testid="column"]:has([data-testid="stSlider"]) {
+  padding-bottom: 14px;
+}
+
+/* ---------- Filtros ativos (chips + limpar) ---------- */
+
+.active-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+}
+
+.filter-chip {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid var(--border-hairline);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+[data-testid="column"]:has([data-testid="stButton"]) {
+  display: flex;
+  align-items: center;
+}
+
+[data-testid="stButton"] button {
+  background: transparent !important;
+  border: 1px solid var(--border-hairline) !important;
+  color: var(--text-secondary) !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  padding: 2px 4px !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease, color 0.2s ease !important;
+}
+
+[data-testid="stButton"] button:hover {
+  border-color: var(--status-critical) !important;
+  color: var(--status-critical) !important;
+}
+
+/* ---------- KPI cards ---------- */
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 1200px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.kpi-card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  border-top: 4px solid var(--accent);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card[title] {
+  cursor: help;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  color: var(--text-primary);
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-value.status-good { color: var(--status-good); }
+.kpi-value.status-critical { color: var(--status-critical); }
+
+/* ---------- Section titles ---------- */
+
+.section-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 6px 0 14px 4px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+/* ---------- Cards de gráfico (a própria caixa do Plotly) ---------- */
+
+[data-testid="stPlotlyChart"] {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 10px 14px 4px 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-hairline);
+  /* Sem isso, o canvas/SVG interno do Plotly (que tem canto reto) vaza por
+     trás do border-radius do card — some overflow "quadrado" atrás do card
+     arredondado. */
+  overflow: hidden;
+  margin-bottom: 22px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-testid="stPlotlyChart"]:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------- Lista de ranking (alternativa ao mapa) ---------- */
+
+.rank-list {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-hairline);
+  box-shadow: var(--shadow-sm);
+  padding: 10px;
+  margin-bottom: 22px;
+  height: 100%;
+}
+
+.rank-list-titulo {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 14px 10px 14px;
+}
+
+.rank-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2px;
+}
+
+.rank-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--accent-glow);
+  border-radius: 8px;
+  z-index: 0;
+}
+
+.rank-pos {
+  position: relative;
+  z-index: 1;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.rank-nome {
+  position: relative;
+  z-index: 1;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-valor {
+  position: relative;
+  z-index: 1;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* ---------- Streamlit widget tweaks ---------- */
+
+[data-testid="stMetricValue"] {
+  font-variant-numeric: tabular-nums;
+}
+
+hr {
+  border-color: var(--grid);
+}
+
+footer, #MainMenu {
+  visibility: hidden;
+}
+
+/* ---------- Widgets nativos (BaseWeb) seguindo as variáveis de tema ----------
+   Streamlit/BaseWeb cravam as cores desses componentes a partir do [theme] do
+   .streamlit/config.toml, que é fixo (não muda em runtime). Como o toggle
+   claro/escuro é nosso, sobrescrevemos as cores desses widgets na marra com
+   !important pra eles seguirem a paleta escolhida em vez do config.toml. */
+
+[data-testid="stWidgetLabel"] p {
+  color: var(--text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+[data-baseweb="select"] > div {
+  background-color: var(--surface) !important;
+  border-color: var(--border-hairline) !important;
+  border-radius: 10px !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+[data-baseweb="select"] input,
+[data-baseweb="select"] div {
+  color: var(--text-primary) !important;
+}
+
+/* Hover e foco — sem isso os campos ficam mudos, parecem inertes/estáticos
+   demais pra uma aplicação que se propõe "moderna". */
+[data-baseweb="select"]:hover > div {
+  border-color: var(--accent) !important;
+}
+
+[data-baseweb="select"]:has(input:focus) > div {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+}
+
+/* Dropdown/popover (renderiza num portal fora do .block-container, mas
+   :root é global então as variáveis chegam do mesmo jeito) */
+[data-baseweb="popover"] [role="listbox"],
+[data-testid="stSelectboxVirtualDropdown"] {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border-hairline) !important;
+}
+
+[data-testid="stSelectboxVirtualDropdown"] li,
+[data-baseweb="menu"] li {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-testid="stSelectboxVirtualDropdown"] li:hover,
+[data-baseweb="menu"] li:hover {
+  background-color: var(--page) !important;
+}
+
+/* Chips do multiselect */
+span[data-baseweb="tag"] {
+  background-color: var(--accent) !important;
+}
+span[data-baseweb="tag"] span {
+  color: var(--page) !important;
+}
+
+/* Slider */
+[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
+  background-color: var(--accent) !important;
+  transition: box-shadow 0.18s ease !important;
+}
+[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"]:hover,
+[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"]:focus-visible {
+  box-shadow: 0 0 0 6px var(--accent-glow) !important;
+}
+[data-testid="stSliderThumbValue"],
+[data-testid="stSliderTickBarMin"],
+[data-testid="stSliderTickBarMax"] {
+  color: var(--text-secondary) !important;
+}
+
+/* Segmented control (toggle de tema) — os dois botões (ativo/inativo) têm
+   larguras de conteúdo diferentes por padrão ("Escuro" vs "Claro" não têm o
+   mesmo tamanho de texto); força os dois a dividir o espaço igualmente. */
+[data-baseweb="button-group"] {
+  display: flex !important;
+  width: 100%;
+}
+[data-testid^="stBaseButton-segmented_control"] {
+  background-color: var(--surface) !important;
+  border-color: var(--border-hairline) !important;
+  color: var(--text-secondary) !important;
+  flex: 1 1 0;
+  justify-content: center;
+  white-space: nowrap;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  min-width: 0;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease !important;
+}
+[data-testid="stBaseButton-segmented_control"]:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+[data-testid="stBaseButton-segmented_controlActive"] {
+  background-color: var(--accent) !important;
+  color: var(--page) !important;
+}
+[data-testid^="stBaseButton-segmented_control"] p {
+  color: inherit !important;
+}
+
+/* st.caption nativo (usado só pra linha "Base local: ..." acima do rodapé)
+   também crava a cor a partir do config.toml fixo — mesmo problema do rodapé
+   customizado logo abaixo. */
+[data-testid="stCaptionContainer"] p {
+  color: var(--text-muted) !important;
+}
+
+/* ---------- Sobre o DataNimbus ---------- */
+
+.about-card {
+  background: var(--surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  padding: 22px 26px;
+  margin: 8px 0 22px 0;
+}
+
+.about-title {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.about-text {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 780px;
+  margin-bottom: 14px;
+}
+
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-tag {
+  background: var(--page);
+  color: var(--text-muted);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* ---------- Rodapé ---------- */
+
+.app-footer {
+  margin-top: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.app-footer-linha1 {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.app-footer-linha2 {
+  font-size: 11.5px;
+}
+
+/* !important porque o Streamlit aplica cor de texto própria (fixa, do
+   config.toml) em elementos genéricos dentro de blocos de markdown — sem
+   isso o rodapé fica com o texto claro (do tema escuro) fixo mesmo depois de
+   trocar pro tema claro, ilegível contra o fundo branco. */
+.app-footer, .app-footer div {
+  color: var(--text-muted) !important;
+}
+
+.app-footer-linha1 {
+  color: var(--text-secondary) !important;
+}
+
+.app-footer a {
+  color: var(--text-secondary) !important;
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--accent) !important;
+}
+
+/* ---------- Motion ----------
+   Streamlit não deixa JS tocar o DOM da página (só dentro de um iframe
+   isolado — ver utils/hero_component.py), mas transições e keyframes em CSS
+   puro funcionam normalmente porque não dependem de script algum. Isso cobre
+   praticamente toda a sensação de "produto vivo": entrada escalonada dos
+   cards, hover, e crossfade suave ao trocar de tema. */
+
+@media (prefers-reduced-motion: no-preference) {
+  iframe,
+  .filter-bar,
+  .kpi-card,
+  [data-testid="stPlotlyChart"] {
+    animation: fadeSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .kpi-row .kpi-card:nth-child(1) { animation-delay: 0.04s; }
+  .kpi-row .kpi-card:nth-child(2) { animation-delay: 0.09s; }
+  .kpi-row .kpi-card:nth-child(3) { animation-delay: 0.14s; }
+  .kpi-row .kpi-card:nth-child(4) { animation-delay: 0.19s; }
+  .kpi-row .kpi-card:nth-child(5) { animation-delay: 0.24s; }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Crossfade suave entre tema claro/escuro em vez de um "flash" seco quando
+   as variáveis --page/--surface/--text-* trocam de valor. */
+.stApp, [data-testid="stHeader"], .filter-bar, .kpi-card,
+[data-testid="stPlotlyChart"], .app-title, .app-subtitle, .kpi-label,
+.kpi-value, .section-title, .filter-chip, .app-footer, .rank-list, .rank-row,
+.about-card, .about-title, .about-text, .tech-tag,
+[data-baseweb="select"] > div, [data-testid^="stBaseButton-segmented_control"] {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Responsivo ----------
+   Testado em 1600px (desktop) até 375px (celular). st.columns já empilha
+   sozinho abaixo de ~640px; o que precisa de ajuste manual é o grid próprio
+   (.kpi-row) e o espaçamento, que não acompanham esse comportamento nativo. */
+
+@media (max-width: 900px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .block-container { padding-top: 3.5rem; padding-left: 1rem; padding-right: 1rem; }
+  .kpi-row { grid-template-columns: 1fr; }
+  .app-title { font-size: 24px; }
+  .app-logo { font-size: 32px; }
+  .filter-bar { padding: 12px 14px 4px 14px; }
+  .app-footer { flex-direction: column; align-items: flex-start; }
+  .about-card { padding: 18px 18px; }
+}

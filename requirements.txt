@@ -1,0 +1,6 @@
+streamlit
+duckdb
+databricks-sql-connector
+pyarrow
+python-dotenv
+plotly

@@ -1,0 +1,20 @@
+# Blueprint do Render pro backend (FastAPI + DuckDB).
+# No dashboard: New > Blueprint > selecione este repositório. Render lê este
+# arquivo e cria o serviço abaixo automaticamente.
+#
+# Depois de criado, preencha em Environment (ver DEPLOY.md):
+#   DUCKDB_URL     -> URL do asset da GitHub Release com o dados_locais.duckdb
+#   CORS_ORIGINS   -> URL do frontend publicado no Vercel (ex: https://datanimbus.vercel.app)
+services:
+  - type: web
+    name: datanimbus-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DUCKDB_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

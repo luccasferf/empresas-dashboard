@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — portados 1:1 de utils/theme.py e utils/plotstyle.py (o app
+ * Streamlit). Mesmos hex, mesma lógica de tema claro/escuro; só o motor que
+ * consome os tokens mudou (Tailwind @theme em vez de CSS gerado em Python).
+ * ------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans: "Inter", -apple-system, "Segoe UI", Arial, sans-serif;
+
+  --color-page: var(--dn-page);
+  --color-surface: var(--dn-surface);
+  --color-accent: var(--dn-accent);
+  --color-accent-glow: var(--dn-accent-glow);
+  --color-text-primary: var(--dn-text-primary);
+  --color-text-secondary: var(--dn-text-secondary);
+  --color-text-muted: var(--dn-text-muted);
+  --color-grid: var(--dn-grid);
+  --color-border: var(--dn-border);
+
+  --color-status-good: var(--dn-status-good);
+  --color-status-warning: var(--dn-status-warning);
+  --color-status-serious: var(--dn-status-serious);
+  --color-status-critical: var(--dn-status-critical);
+
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  --shadow-dn-sm: 0 2px 8px rgba(0, 0, 0, 0.16);
+  --shadow-dn-md: 0 4px 14px rgba(0, 0, 0, 0.18);
+  --shadow-dn-lg: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+:root {
+  --dn-page: #eef1f6;
+  --dn-surface: #ffffff;
+  --dn-accent: #0e7490;
+  --dn-accent-glow: rgba(14, 116, 144, 0.14);
+  --dn-text-primary: #0b0f19;
+  --dn-text-secondary: #45505f;
+  --dn-text-muted: #54606f;
+  --dn-grid: #e3e7ee;
+  --dn-border: rgba(11, 15, 25, 0.08);
+
+  --dn-status-good: #0ca30c;
+  --dn-status-warning: #fab219;
+  --dn-status-serious: #ec835a;
+  --dn-status-critical: #d03b3b;
+
+  --dn-gradient-from: #2fa8c7;
+}
+
+.dark {
+  --dn-page: #0a0e17;
+  --dn-surface: #121a2b;
+  --dn-accent: #22d3ee;
+  --dn-accent-glow: rgba(34, 211, 238, 0.14);
+  --dn-text-primary: #f5f7fa;
+  --dn-text-secondary: #9aa5b8;
+  --dn-text-muted: #6b7590;
+  --dn-grid: #232c40;
+  --dn-border: rgba(255, 255, 255, 0.08);
+
+  --dn-status-good: #0ca30c;
+  --dn-status-warning: #fab219;
+  --dn-status-serious: #ec835a;
+  --dn-status-critical: #d03b3b;
+
+  --dn-gradient-from: #149dbf;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(900px 560px at 8% -6%, var(--dn-accent-glow) 0%, transparent 60%),
+    radial-gradient(760px 520px at 108% 12%, var(--dn-accent-glow) 0%, transparent 55%),
+    radial-gradient(1000px 700px at 50% 115%, var(--dn-accent-glow) 0%, transparent 55%),
+    var(--dn-page);
+  color: var(--dn-text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Textura de grid sutil no plano de fundo — aplicada num layer fixo atrás do
+ * app (ver App.tsx), reforça a identidade "plataforma de dados". */
+.bg-grid-texture {
+  background-image:
+    linear-gradient(var(--dn-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--dn-border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Texto com gradiente na mesma família de cor do accent — usado nos números
+ * de destaque (hero) para dar peso visual sem sair da paleta do tema. */
+.text-gradient-accent {
+  background-image: linear-gradient(90deg, var(--dn-gradient-from), var(--dn-accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+::selection {
+  background: var(--dn-accent);
+  color: var(--dn-page);
+}
+
+:focus-visible {
+  outline: 2px solid var(--dn-accent);
+  outline-offset: 2px;
+}

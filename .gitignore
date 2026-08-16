@@ -1,0 +1,16 @@
+.env
+data/*.duckdb
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+.streamlit/secrets.toml
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.production
+
+# backend
+backend/.venv/

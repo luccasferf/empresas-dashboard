@@ -1,0 +1,10 @@
+{
+  "name": "DataNimbus — Cenário Empresarial Brasileiro",
+  "short_name": "DataNimbus",
+  "description": "Plataforma de dados e análise do cenário empresarial brasileiro utilizando dados públicos da Receita Federal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0E17",
+  "theme_color": "#0A0E17",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

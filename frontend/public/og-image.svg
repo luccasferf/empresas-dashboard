@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="20%" cy="15%" r="80%">
+      <stop offset="0%" stop-color="#1a3a44"/>
+      <stop offset="60%" stop-color="#0A0E17"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <path d="M150 300a54 54 0 0 1 4.8-107.8 72 72 0 0 1 139.2-22.8 60 60 0 0 1-7.2 118.6H150Z" fill="#22D3EE"/>
+  <text x="150" y="400" font-family="Arial, sans-serif" font-size="72" font-weight="800" fill="#F5F7FA">DataNimbus</text>
+  <text x="150" y="450" font-family="Arial, sans-serif" font-size="26" fill="#9AA5B8">Plataforma de dados empresariais brasileiros</text>
+  <text x="150" y="490" font-family="Arial, sans-serif" font-size="22" fill="#6B7590">Panorama nacional de empresas a partir de dados públicos da Receita Federal</text>
+</svg>
